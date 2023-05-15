@@ -1,0 +1,105 @@
+''' 
+This code is a mini calculator with just 3 operations and only 2 inputs
+it will calculate either +, - , / and x wih two numbers
+it has defensive programming to prevent the program from crashing
+it is then written to a file
+'''
+# operational error 
+#only file - file exception try /except
+#zero division error - try/except 
+
+while True:
+    try:
+        # User prompted input and only numerical values allowed
+        while True:
+            try:
+                num1 = float(input("Enter the first number: "))
+                num2 = float(input("Enter the second number: "))
+                break
+            except ValueError:
+                print("Invalid input. Please enter a number.")
+
+        # User prompted to choose an operation
+        while True:
+            op = input("Enter an operation (+, -, x, /): ")
+
+            # Check if the operation is valid
+            if op not in ["+", "-", "x", "/"]:
+                print("Invalid operation.")
+            else:
+                break
+
+        # Perform the calculation
+        try:
+            if op == "+":
+                result = num1 + num2
+                equation = f"{num1} + {num2} = {result}\n"
+            elif op == "-":
+                result = num1 - num2
+                equation = f"{num1} - {num2} = {result}\n"
+            elif op == "x":
+                result = num1 * num2
+                equation = f"{num1} x {num2} = {result}\n"
+            elif op == "/":
+                if num2 == 0:
+                    raise ZeroDivisionError("Error: Division by zero not allowed")
+                result = num1 / num2
+                equation = f"{num1} / {num2} = {result}\n"
+        except ZeroDivisionError as e:
+            print(e)
+            continue
+
+        # Prompt user to save the calculation to a file
+        save_choice = input("Do you want to save the calculation to a file? (y/n): ")
+
+        if save_choice.lower() == "y":
+            while True:
+                filename = input("Enter the filename to save the calculation: ")
+                if filename.endswith(".txt"):
+                    break
+                else:
+                    print("Invalid filename. Please enter a .txt file.")
+
+            # Write the equation to the file
+            with open(filename, "a+") as f:
+                f.write(equation)
+            print("Calculation saved successfully.")
+
+        # Display the calculation
+        print(f"The result is: {result}")
+
+        # Ask user if they want to do another equation or read equations from a file
+        while True:
+            choice = input("Do you want to do another equation (y/n) or read equations from a file (f)? ")
+
+            if choice.lower() not in ["y", "n", "f"]:
+                print("Invalid input. Please enter 'y', 'n', or 'f'.")
+            else:
+                break
+
+        # If user wants to read equations from a file
+        if choice.lower() == "f":
+            while True:
+                filename = input("Enter the filename to read equations from: ")
+                if filename.endswith(".txt"):
+                    break
+                else:
+                    print("Invalid filename. Please enter a .txt file.")
+
+            try:
+                with open(filename, "r") as f:
+                    equations = f.read()
+                    print("Equations:")
+                    print(equations)
+
+            except FileNotFoundError:
+                print("File not found. Please try again.")
+                continue
+
+        # If user enters 'n' or anything else, break loop
+        else:
+            break
+
+    except FileNotFoundError:
+        print(f"Error: File '{filename}' not found.")
+        exit()
